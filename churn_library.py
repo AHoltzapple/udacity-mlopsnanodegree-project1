@@ -175,6 +175,64 @@ def perform_feature_engineering(df, response):
     return x_train, x_test, y_train, y_test
 
 
+def train_models(x_train, x_test, y_train):
+    """
+    Train models and save outputs.
+
+    input:
+            train/test data
+    output:
+            None
+    """
+    create_output_directories()
+
+    # grid search
+    rfc = RandomForestClassifier(random_state=25)
+
+    param_dist = {
+        'n_estimators': [200, 300],
+        'max_features': ['sqrt'],
+        'max_depth': [5, 8, 10],
+        'min_samples_split': [5, 10],
+        'min_samples_leaf': [2, 4],
+        'criterion': ['gini']
+    }
+
+    cv_rfc = RandomizedSearchCV(
+        estimator=rfc,
+        param_distributions=param_dist,
+        n_iter=12,
+        cv=3,
+        random_state=42,
+        n_jobs=-1,
+        error_score='raise'
+    )
+
+    cv_rfc.fit(x_train, y_train)
+
+    lrc = Pipeline([
+        ('scaler', StandardScaler()),
+        ('model', LogisticRegression(max_iter=3000))])
+
+    lrc.fit(x_train, y_train)
+    lrc = lrc['model']
+
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(x_train)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(x_test)
+
+    y_train_preds_lr = lrc.predict(x_train)
+    y_test_preds_lr = lrc.predict(x_test)
+
+    joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
+    joblib.dump(lrc, './models/logistic_model.pkl')
+
+    rfc_model = joblib.load('./models/rfc_model.pkl')
+    lr_model = joblib.load('./models/logistic_model.pkl')
+
+    return rfc_model, lr_model, cv_rfc, lrc, y_train_preds_rf, \
+        y_test_preds_rf, y_train_preds_lr, y_test_preds_lr
+
+
 def classification_report_image(param_list):
     """
     Save classification reports as images.
@@ -292,63 +350,6 @@ def feature_importance_plot(model, x_data):
         plt.savefig(f'{RESULTS_DIR}/feature_importances_lr.png')
 
 
-def train_models(x_train, x_test, y_train):
-    """
-    Train models and save outputs.
-
-    input:
-            train/test data
-    output:
-            None
-    """
-    create_output_directories()
-
-    # grid search
-    rfc = RandomForestClassifier(random_state=25)
-
-    param_dist = {
-        'n_estimators': [200, 300],
-        'max_features': ['sqrt'],
-        'max_depth': [5, 8, 10],
-        'min_samples_split': [5, 10],
-        'min_samples_leaf': [2, 4],
-        'criterion': ['gini']
-    }
-
-    cv_rfc = RandomizedSearchCV(
-        estimator=rfc,
-        param_distributions=param_dist,
-        n_iter=12,
-        cv=3,
-        random_state=42,
-        n_jobs=-1,
-        error_score='raise'
-    )
-
-    cv_rfc.fit(x_train, y_train)
-
-    lrc = Pipeline([
-        ('scaler', StandardScaler()),
-        ('model', LogisticRegression(max_iter=3000))])
-
-    lrc.fit(x_train, y_train)
-    lrc = lrc['model']
-
-    y_train_preds_rf = cv_rfc.best_estimator_.predict(x_train)
-    y_test_preds_rf = cv_rfc.best_estimator_.predict(x_test)
-
-    y_train_preds_lr = lrc.predict(x_train)
-    y_test_preds_lr = lrc.predict(x_test)
-
-    joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
-    joblib.dump(lrc, './models/logistic_model.pkl')
-
-    rfc_model = joblib.load('./models/rfc_model.pkl')
-    lr_model = joblib.load('./models/logistic_model.pkl')
-
-    return rfc_model, lr_model, cv_rfc, lrc, y_train_preds_rf, \
-        y_test_preds_rf, y_train_preds_lr, y_test_preds_lr
-
 
 if __name__ == "__main__":
     create_output_directories()
@@ -366,12 +367,15 @@ if __name__ == "__main__":
     ]
 
     bank_data = encoder_helper(bank_data, category_columns)
+
     x_train_data, x_test_data, y_train_data, y_test_data\
         = perform_feature_engineering(bank_data, "Churn")
+    
     rfc_model_output, lr_model_output, cv_rfc_output, lrc_output, \
         y_train_preds_rf_output, y_test_preds_rf_output, \
         y_train_preds_lr_output, y_test_preds_lr_output\
         = train_models(x_train_data, x_test_data, y_train_data)
+    
     classification_report_image(
         [x_test_data,
          y_train_data,
@@ -382,5 +386,7 @@ if __name__ == "__main__":
          y_test_preds_rf_output,
          rfc_model_output,
          lr_model_output])
+    
     feature_importance_plot(cv_rfc_output, x_train_data)
+
     feature_importance_plot(lrc_output, x_train_data)

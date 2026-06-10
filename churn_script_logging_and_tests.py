@@ -1,8 +1,13 @@
-# TODO:
-# Add a module-level docstring describing:
-# - Purpose of this file
-# - Author
-# - Date created
+"""Testing and logging script for the churn prediction pipeline.
+
+This module defines end-to-end tests for the churn_library workflow,
+including data import, exploratory data analysis, feature encoding,
+feature engineering, model training and evaluation. It also configures logging so
+that INFO and ERROR events are written to a dedicated log file.
+
+Author: Alex Holtzapple
+Date created: 2026-06-10
+"""
 
 import logging
 import os
@@ -13,50 +18,57 @@ LOGS_DIR = "./logs"
 LOG_FILE = os.path.join(LOGS_DIR, "churn_library.log")
 DATA_PATH = "./data/bank_data.csv"
 
-# TODO:
-# configure logging to write INFO and ERROR messages
-# to a .log file inside the ./logs directory
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    filemode='w',
+    format='%(name)s - %(levelname)s - %(message)s')
 
 
 def test_import(import_data):
     """Test data import."""
     try:
-        df = import_data(DATA_PATH)
+        df = cls.import_data(DATA_PATH)
+        logging.info("SUCCESS: Data import successful.")
 
-        # TODO: add logging for success
-
-    except FileNotFoundError as err:
-
-        # TODO: add logging for file not found
-
-        raise err
+    except FileNotFoundError:
+        logging.error("ERROR: File not found.")
+        raise FileNotFoundError("ERROR: File not found.")
 
     try:
         assert df.shape[0] > 0
         assert df.shape[1] > 0
 
-    except AssertionError as err:
-
-        # TODO: add logging for failure
-
-        raise err
+    except AssertionError:
+        logging.error("ERROR: DataFrame is empty. Check the file and contents.")
+        raise AssertionError("ERROR: DataFrame is empty. Check the file and contents.")
 
 
 def test_eda(perform_eda):
     """Test EDA."""
     try:
         df = cls.import_data(DATA_PATH)
-        perform_eda(df)
+        cls.perform_eda(df)
 
-        # TODO:
-        # assert output files exist
+        EDA_DIR = "./images/eda"
+        image_files = [
+            'churn_distribution.png',
+            'customer_age_distribution.png',
+            'marital_status_distribution.png',
+            'total_trans_count_distribution.png',
+            'correlation_heatmap.png'
+        ]
 
-        # TODO: logging success
+        for image_file in image_files:
+            try:
+                assert os.path.exists(f'{EDA_DIR}/{image_file}')
+            except AssertionError:
+                logging.error("ERROR: Image file not found.")
+                raise AssertionError(f"Image file {image_file} not found in {EDA_DIR}.")
+        logging.info("SUCCESS: EDA images generated successfully.")
 
     except Exception as err:
-
-        # TODO: logging failure
-
+        logging.error("ERROR: Failed to generate EDA images.")
         raise err
 
 
@@ -65,17 +77,36 @@ def test_encoder_helper(encoder_helper):
     try:
         df = cls.import_data(DATA_PATH)
 
-        # TODO:
-        # create response column
-        # call encoder_helper
-        # assert encoded columns exist
+        category_columns = [
+        "Gender",
+        "Education_Level",
+        "Marital_Status",
+        "Income_Category",
+        "Card_Category"
+        ]
 
-        # TODO: logging success
+        df = cls.encoder_helper(df, category_columns)
+        for category in category_columns:
+            encoded_columns = [col for col in df.columns if col.startswith(category + "_")]
+            unique_values = df[category].nunique()
+
+            try:
+                assert len(encoded_columns) > 0
+            except AssertionError:
+                logging.error(f"ERROR. No encoded columns found for category {category}.")
+                raise AssertionError(f"ERROR. No encoded columns found for category {category}.")
+
+            try:
+                assert len(encoded_columns) == unique_values - 1
+            except AssertionError:
+                logging.error("ERROR. Encoded columns do not match expected number based on unique values.")
+                raise AssertionError(f"ERROR. Encoded columns do not match expected number based on unique values.\
+                                     Expected {unique_values - 1} encoded columns for {category}, but found {len(encoded_columns)}.")
+        
+        logging.info("SUCCESS: Category column encoding successful and verified.")
 
     except Exception as err:
-
-        # TODO: logging failure
-
+        logging.error("ERROR: Failed to encode category columns.")
         raise err
 
 
