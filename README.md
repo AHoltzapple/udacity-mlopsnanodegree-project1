@@ -22,9 +22,6 @@ The pipeline utilizes two core model families:
 
 ## Files and Data Description
 
-> TODO:
-> Describe the main files and dataset used in this project.
-
 ### Main Files
 
 - `churn_library.py`  
