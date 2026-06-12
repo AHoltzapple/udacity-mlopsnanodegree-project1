@@ -96,6 +96,11 @@ Running this file triggers the full operational workflow. It builds the necessar
 python churn_script_logging_and_tests.py
 ```
 
+Or, use pytest:
+```bash
+pytest churn_script_logging_and_test.py
+```
+
 This command runs the custom automated test suite via the pytest CLI runner. It validates file system architectures, data shapes, feature dimensions, and tracking states across your module. Every milestone and error catch writes directly to `./logs/churn_library.log` with formatted timestamps, trace logs, and success declarations.
 
 ---
@@ -105,20 +110,20 @@ This command runs the custom automated test suite via the pytest CLI runner. It 
 Executing the code and tests guarantees the automated creation of the following production artifacts:
 
 1. Extracted EDA Plots (`images/eda/`)
-    `churn_distribution.png`: Histogram detailing the relative proportion of active vs. churned clients.
-    `customer_age_distribution.png`: Density breakdown of client age demographics.
-    `marital_status_distribution.png`: Categorical status distribution bar charts.
-    `total_transaction_distribution.png`: Kernel density plot of total account transaction frequencies.
-    `heatmap.png`: High-resolution Pearson correlation matrix tracking numeric columns.
+    - `churn_distribution.png`: Histogram detailing the relative proportion of active vs. churned clients.
+    - `customer_age_distribution.png`: Density breakdown of client age demographics.
+    - `marital_status_distribution.png`: Categorical status distribution bar charts.
+    - `total_transaction_distribution.png`: Kernel density plot of total account transaction frequencies.
+    - `heatmap.png`: High-resolution Pearson correlation matrix tracking numeric columns.
 
 2. Model Performance Deliverables (`images/results/`)
-    `roc_curve.png`: Comparison plot graphing receiver operating characteristics for both classifiers.
-    `feature_importances_rf.png`: Sorted horizontal bar chart tracking feature importances for Random Forest.
-    `feature_importances_lr.png`: Coefficients magnitude visualization detailing feature impact weight for Logistic Regression.
-    `rf_classification_report.png`: Graphical text matrix displaying precision, recall, and f1-score splits for train and test segments.
-    `logistic_classification_report`.png: Linear baseline evaluation matrix for train and test segments.
+    - `roc_curve.png`: Comparison plot graphing receiver operating characteristics for both classifiers.
+    - `feature_importances_rf.png`: Sorted horizontal bar chart tracking feature importances for Random Forest.
+    - `feature_importances_lr.png`: Coefficients magnitude visualization detailing feature impact weight for Logistic Regression.
+    - `rf_classification_report.png`: Graphical text matrix displaying precision, recall, and f1-score splits for train and test segments.
+    - `logistic_classification_report`.png: Linear baseline evaluation matrix for train and test segments.
 
 3. Production Models and Logs
-    `models/rfc_model.pkl`: Serialized, optimized Random Forest estimator.
-    `models/logistic_model.pkl`: Serialized baseline Logistic Regression estimator.
-    `logs/churn_library.log`: Verified pipeline execution and error messages.
+    - `models/rfc_model.pkl`: Serialized, optimized Random Forest estimator.
+    - `models/logistic_model.pkl`: Serialized baseline Logistic Regression estimator.
+    - `logs/churn_library.log`: Verified pipeline execution and error messages.
