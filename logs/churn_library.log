@@ -1,0 +1,7 @@
+root - INFO - SUCCESS: Logs directory & file exists and is ready for logging.
+root - INFO - SUCCESS: Data import successful.
+root - INFO - SUCCESS: EDA performed and images generated successfully.
+root - INFO - SUCCESS: Category column encoding successful and verified.
+root - INFO - SUCCESS: Feature engineering completed successfully.
+root - INFO - SUCCESS: Models trained and saved successfully.
+root - INFO - SUCCESS: Model result images saved successfully.
