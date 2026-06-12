@@ -113,8 +113,8 @@ Executing the code and tests guarantees the automated creation of the following 
     - `churn_distribution.png`: Histogram detailing the relative proportion of active vs. churned clients.
     - `customer_age_distribution.png`: Density breakdown of client age demographics.
     - `marital_status_distribution.png`: Categorical status distribution bar charts.
-    - `total_transaction_distribution.png`: Kernel density plot of total account transaction frequencies.
-    - `heatmap.png`: High-resolution Pearson correlation matrix tracking numeric columns.
+    - `total_trans_count_distribution.png`: Kernel density plot of total account transaction frequencies.
+    - `correlation_heatmap.png`: High-resolution Pearson correlation matrix tracking numeric columns.
 
 2. Model Performance Deliverables (`images/results/`)
     - `roc_curve.png`: Comparison plot graphing receiver operating characteristics for both classifiers.
