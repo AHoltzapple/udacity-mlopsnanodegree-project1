@@ -115,8 +115,8 @@ def encoder_helper(df, category_lst):
             df: updated dataframe
     """
     dummies = df[category_lst]
-    dummies = pd.get_dummies(dummies, drop_first=True)
-    df = pd.concat([df, dummies], axis=1)
+    encoded_df = pd.get_dummies(dummies, drop_first=True)
+    df = pd.concat([df, encoded_df], axis=1)
     return df
 
 
@@ -134,41 +134,21 @@ def perform_feature_engineering(df, response):
     y = df[response]
     x = pd.DataFrame()
 
-    df['Gender_Churn'] = df['Gender'].map(
-        df.groupby('Gender')[response].mean())
-
-    df['Education_Level_Churn'] = df['Education_Level'].map(
-        df.groupby('Education_Level')[response].mean())
-
-    df['Marital_Status_Churn'] = df['Marital_Status'].map(
-        df.groupby('Marital_Status')[response].mean())
-
-    df['Income_Category_Churn'] = df['Income_Category'].map(
-        df.groupby('Income_Category')[response].mean())
-
-    df['Card_Category_Churn'] = df['Card_Category'].map(
-        df.groupby('Card_Category')[response].mean())
-
     keep_cols = [
         'Customer_Age',
-        'Dependent_count',
-        'Months_on_book',
-        'Total_Relationship_Count',
-        'Months_Inactive_12_mon',
-        'Contacts_Count_12_mon',
-        'Credit_Limit',
-        'Total_Revolving_Bal',
-        'Avg_Open_To_Buy',
-        'Total_Amt_Chng_Q4_Q1',
-        'Total_Trans_Amt',
-        'Total_Trans_Ct',
-        'Total_Ct_Chng_Q4_Q1',
-        'Avg_Utilization_Ratio',
-        'Gender_Churn',
-        'Education_Level_Churn',
-        'Marital_Status_Churn',
-        'Income_Category_Churn',
-        'Card_Category_Churn']
+       'Dependent_count', 'Months_on_book', 'Total_Relationship_Count',
+       'Months_Inactive_12_mon', 'Contacts_Count_12_mon', 'Credit_Limit',
+       'Total_Revolving_Bal', 'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1',
+       'Total_Trans_Amt', 'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1',
+       'Avg_Utilization_Ratio', 'Gender_M',
+       'Education_Level_Doctorate', 'Education_Level_Graduate',
+       'Education_Level_High School', 'Education_Level_Post-Graduate',
+       'Education_Level_Uneducated', 'Education_Level_Unknown',
+       'Marital_Status_Married', 'Marital_Status_Single',
+       'Marital_Status_Unknown', 'Income_Category_$40K - $60K',
+       'Income_Category_$60K - $80K', 'Income_Category_$80K - $120K',
+       'Income_Category_Less than $40K', 'Income_Category_Unknown',
+       'Card_Category_Gold', 'Card_Category_Platinum', 'Card_Category_Silver']
 
     x[keep_cols] = df[keep_cols]
 

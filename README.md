@@ -98,7 +98,7 @@ python churn_script_logging_and_tests.py
 
 Or, use pytest:
 ```bash
-pytest churn_script_logging_and_test.py
+pytest churn_script_logging_and_tests.py
 ```
 
 This command runs the custom automated test suite via the pytest CLI runner. It validates file system architectures, data shapes, feature dimensions, and tracking states across your module. Every milestone and error catch writes directly to `./logs/churn_library.log` with formatted timestamps, trace logs, and success declarations.
